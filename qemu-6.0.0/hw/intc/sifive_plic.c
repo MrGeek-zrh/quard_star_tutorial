@@ -521,6 +521,27 @@ type_init(sifive_plic_register_types)
 /*
  * Create PLIC device.
  */
+/**
+ * 创建并初始化一个sifive的平台中断控制器（PLIC）设备。
+ * 
+ * @param addr           设备的物理地址。
+ * @param hart_config    用于配置 hart（Hardware Accelerator and Resource Team）的字符串。
+ * @param hartid_base    Hart ID 基地址。
+ * @param num_sources    中断源的数量。
+ * @param num_priorities 优先级的数量。
+ * @param priority_base  优先级基地址。
+ * @param pending_base   待处理中断基地址。
+ * @param enable_base    启用中断基地址。
+ * @param enable_stride  启用中断地址的步长。
+ * @param context_base   上下文基地址。
+ * @param context_stride 上下文地址的步长。
+ * @param aperture_size  设备的内存窗口大小。
+ * @return 返回初始化好的设备状态指针。
+ * 
+ * 函数首先创建一个新的sifive PLIC设备实例，然后设置一系列设备属性，包括Hart配置、Hart ID基地址、
+ * 中断源数量、优先级数量、优先级和待处理中断的基地址、启用中断的基地址和步长、上下文基地址和步长，
+ * 以及内存窗口大小。接着，实现设备的映射和初始化。最后，返回创建的设备状态指针。
+ */
 DeviceState *sifive_plic_create(hwaddr addr, char *hart_config,
     uint32_t hartid_base, uint32_t num_sources,
     uint32_t num_priorities, uint32_t priority_base,
@@ -531,6 +552,8 @@ DeviceState *sifive_plic_create(hwaddr addr, char *hart_config,
     DeviceState *dev = qdev_new(TYPE_SIFIVE_PLIC);
     assert(enable_stride == (enable_stride & -enable_stride));
     assert(context_stride == (context_stride & -context_stride));
+    
+    // 设置设备属性
     qdev_prop_set_string(dev, "hart-config", hart_config);
     qdev_prop_set_uint32(dev, "hartid-base", hartid_base);
     qdev_prop_set_uint32(dev, "num-sources", num_sources);
@@ -542,7 +565,10 @@ DeviceState *sifive_plic_create(hwaddr addr, char *hart_config,
     qdev_prop_set_uint32(dev, "context-base", context_base);
     qdev_prop_set_uint32(dev, "context-stride", context_stride);
     qdev_prop_set_uint32(dev, "aperture-size", aperture_size);
+
+    // 实现设备并映射内存
     sysbus_realize_and_unref(SYS_BUS_DEVICE(dev), &error_fatal);
     sysbus_mmio_map(SYS_BUS_DEVICE(dev), 0, addr);
+    
     return dev;
 }
