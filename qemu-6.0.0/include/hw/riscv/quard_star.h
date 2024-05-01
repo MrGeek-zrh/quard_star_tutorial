@@ -25,6 +25,7 @@
 #include "qom/object.h"
 
 #define QUARD_STAR_CPUS_MAX 8
+// numa节点个数
 #define QUARD_STAR_SOCKETS_MAX 8
 
 #define TYPE_RISCV_QUARD_STAR_MACHINE MACHINE_TYPE_NAME("quard-star")
@@ -37,7 +38,9 @@ struct RISCVVirtState {
     MachineState parent;
 
     /*< public >*/
+    // numa节点数组
     RISCVHartArrayState soc[QUARD_STAR_SOCKETS_MAX];
+    // 
     DeviceState *plic[QUARD_STAR_SOCKETS_MAX];
     PFlashCFI01 *flash;
 };
