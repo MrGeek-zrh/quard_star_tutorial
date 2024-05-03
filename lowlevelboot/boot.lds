@@ -4,6 +4,7 @@ ENTRY( _start )
 
 MEMORY
 { 
+ /* name (attr) : ORIGIN = origin, LENGTH = len */ 
 	flash (rxai!w) : ORIGIN = 0x20000000, LENGTH = 512k
 }
 
